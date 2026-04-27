@@ -42,7 +42,7 @@ export default function Navbar() {
             <PlayCircle size={24} />
           </div>
           <span className="text-xl font-display font-bold tracking-tighter">
-            Anime<span className="gradient-text">Verse</span>
+            Ani <span className="gradient-text">List</span>
           </span>
         </Link>
 

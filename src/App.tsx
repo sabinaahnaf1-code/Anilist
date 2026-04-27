@@ -41,7 +41,7 @@ export default function App() {
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
             <div className="flex flex-col gap-2">
               <span className="text-xl font-display font-bold tracking-tighter">
-                Anime<span className="gradient-text">Verse</span>
+                Ani <span className="gradient-text">List</span>
               </span>
               <p className="text-slate-500 text-sm">Your ultimate anime exploration companion.</p>
             </div>
@@ -54,7 +54,7 @@ export default function App() {
             <div className="text-slate-600 text-xs text-center md:text-right">
               Powered by Jikan API. Data provided by MyAnimeList.
               <br />
-              © 2026 AnimeVerse. All rights reserved.
+              © 2026 Ani List. All rights reserved.
             </div>
           </div>
         </footer>

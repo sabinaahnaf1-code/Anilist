@@ -22,6 +22,11 @@ export interface Anime {
   duration: string;
   rank: number;
   popularity: number;
+  trailer: {
+    youtube_id: string | null;
+    url: string | null;
+    embed_url: string | null;
+  } | null;
 }
 
 export interface JikanResponse<T> {

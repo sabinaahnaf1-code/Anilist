@@ -87,10 +87,25 @@ export default function AnimeDetails() {
             </div>
             
             <div className="mt-6 flex flex-col gap-3">
-              <button className="gradient-button w-full py-4 rounded-2xl flex items-center justify-center gap-3 font-bold text-white shadow-xl shadow-brand-primary/20">
-                <Play size={20} fill="currentColor" />
-                Watch Trailer
-              </button>
+              {anime.trailer?.url ? (
+                <a
+                  href={anime.trailer.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="gradient-button w-full py-4 rounded-2xl flex items-center justify-center gap-3 font-bold text-white shadow-xl shadow-brand-primary/20"
+                >
+                  <Play size={20} fill="currentColor" />
+                  Watch Trailer
+                </a>
+              ) : (
+                <button 
+                  disabled
+                  className="bg-slate-800 text-slate-500 cursor-not-allowed w-full py-4 rounded-2xl flex items-center justify-center gap-3 font-bold border border-white/5"
+                >
+                  <Play size={20} />
+                  Trailer Unavailable
+                </button>
+              )}
               <button
                 onClick={toggleWatchlist}
                 className={`w-full py-4 rounded-2xl flex items-center justify-center gap-3 font-bold transition-all border ${

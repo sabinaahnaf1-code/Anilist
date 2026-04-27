@@ -7,15 +7,30 @@ const BASE_URL = 'https://api.jikan.moe/v4';
  * Rate limiting: 3 requests per second, 60 requests per minute.
  */
 class AnimeService {
+  private queue: Promise<any> = Promise.resolve();
+
   private async fetcher<T>(endpoint: string): Promise<T> {
-    const response = await fetch(`${BASE_URL}${endpoint}`);
-    if (!response.ok) {
-      if (response.status === 429) {
-        throw new Error('Too many requests. Please wait a moment.');
+    // Chain the request to the existing queue
+    const result = this.queue.then(async () => {
+      // Add minimum delay between requests
+      await new Promise(resolve => setTimeout(resolve, 600));
+      
+      const response = await fetch(`${BASE_URL}${endpoint}`);
+      
+      if (!response.ok) {
+        if (response.status === 429) {
+          // If we hit 429, wait even longer
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          return this.fetcher(endpoint);
+        }
+        throw new Error(`Failed to fetch: ${response.statusText}`);
       }
-      throw new Error(`Failed to fetch: ${response.statusText}`);
-    }
-    return response.json();
+      return response.json();
+    });
+
+    // Update the queue to wait for the latest result
+    this.queue = result.catch(() => {});
+    return result;
   }
 
   async getTopAnime(limit = 10): Promise<JikanResponse<Anime[]>> {

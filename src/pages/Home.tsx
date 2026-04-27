@@ -13,9 +13,12 @@ export default function Home() {
   const [popularAnime, setPopularAnime] = useState<Anime[]>([]);
   const [heroAnime, setHeroAnime] = useState<Anime | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
+      setError(null);
       try {
         const [top, trending, popular] = await Promise.all([
           animeService.getTopAnime(12),
@@ -30,6 +33,7 @@ export default function Home() {
         setHeroAnime(top.data[Math.floor(Math.random() * 5)]);
       } catch (error) {
         console.error("Failed to fetch home data:", error);
+        setError("We're having trouble reaching the anime servers. Please try refreshing the page in a few seconds.");
       } finally {
         setLoading(false);
       }
@@ -38,6 +42,21 @@ export default function Home() {
   }, []);
 
   if (loading) return <LoadingSpinner />;
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6 px-4 text-center">
+        <div className="text-brand-primary text-6xl opacity-50">!</div>
+        <h2 className="text-2xl font-bold text-slate-100">{error}</h2>
+        <button 
+          onClick={() => window.location.reload()}
+          className="gradient-button px-8 py-3 rounded-full font-bold text-white"
+        >
+          Retry Now
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-8 pb-20">
