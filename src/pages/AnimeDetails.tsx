@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Star, Play, Calendar, Clock, Tv, Plus, Check, ChevronLeft, Volume2, Globe, Youtube } from 'lucide-react';
 import { animeService } from '../services/animeService.ts';
 import { findYouTubeTrailerId } from '../services/geminiService.ts';
+import { searchYouTubeTrailer } from '../services/youtubeService.ts';
 import { Anime } from '../types.ts';
 import LoadingSpinner from '../components/LoadingSpinner.tsx';
 
@@ -39,9 +40,15 @@ export default function AnimeDetails() {
           if (youtubeId) {
             setActiveTrailerId(youtubeId);
           } else {
-            // Fallback: Use Gemini to find the trailer
+            // Fallback: Try YouTube API first, then Gemini
             setSearchingTrailer(true);
-            const fallbackId = await findYouTubeTrailerId(animeData.title_english || animeData.title);
+            
+            let fallbackId = await searchYouTubeTrailer(animeData.title_english || animeData.title);
+            
+            if (!fallbackId) {
+              fallbackId = await findYouTubeTrailerId(animeData.title_english || animeData.title);
+            }
+
             if (fallbackId) {
               setActiveTrailerId(fallbackId);
             }
