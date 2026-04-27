@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { motion } from 'motion/react';
-import { Star, Play, Calendar, Clock, Tv, Plus, Check, ChevronLeft, Volume2, Globe } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { Star, Play, Calendar, Clock, Tv, Plus, Check, ChevronLeft, Volume2, Globe, Youtube } from 'lucide-react';
 import { animeService } from '../services/animeService.ts';
+import { findYouTubeTrailerId } from '../services/geminiService.ts';
 import { Anime } from '../types.ts';
 import LoadingSpinner from '../components/LoadingSpinner.tsx';
 
@@ -12,17 +13,44 @@ export default function AnimeDetails() {
   const [anime, setAnime] = useState<Anime | null>(null);
   const [loading, setLoading] = useState(true);
   const [isWatchlisted, setIsWatchlisted] = useState(false);
+  const [activeTrailerId, setActiveTrailerId] = useState<string | null>(null);
+  const [searchingTrailer, setSearchingTrailer] = useState(false);
 
   useEffect(() => {
     const fetchDetails = async () => {
+      setLoading(true);
+      setActiveTrailerId(null);
+      setSearchingTrailer(false);
       try {
         if (id) {
           const res = await animeService.getAnimeDetails(Number(id));
-          setAnime(res.data);
+          const animeData = res.data;
+          setAnime(animeData);
+          
+          // Initial trailer ID from Jikan
+          let youtubeId = animeData.trailer?.youtube_id;
+          
+          if (!youtubeId && animeData.trailer?.url) {
+            // Try to extract from URL (e.g., https://www.youtube.com/watch?v=...)
+            const urlMatch = animeData.trailer.url.match(/(?:v=|\/embed\/|youtu\.be\/)([^&?#/]+)/);
+            if (urlMatch) youtubeId = urlMatch[1];
+          }
+
+          if (youtubeId) {
+            setActiveTrailerId(youtubeId);
+          } else {
+            // Fallback: Use Gemini to find the trailer
+            setSearchingTrailer(true);
+            const fallbackId = await findYouTubeTrailerId(animeData.title_english || animeData.title);
+            if (fallbackId) {
+              setActiveTrailerId(fallbackId);
+            }
+            setSearchingTrailer(false);
+          }
           
           // Check watchlist
           const watchlist = JSON.parse(localStorage.getItem('watchlist') || '[]');
-          setIsWatchlisted(watchlist.some((item: any) => item.mal_id === res.data.mal_id));
+          setIsWatchlisted(watchlist.some((item: any) => item.mal_id === animeData.mal_id));
         }
       } catch (error) {
         console.error("Failed to fetch anime details:", error);
@@ -83,29 +111,9 @@ export default function AnimeDetails() {
                 alt={anime.title}
                 className="w-full h-auto aspect-[2/3] object-cover"
               />
-              <div className="absolute inset-0 bg-linear-to-t from-bg-dark/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
             
             <div className="mt-6 flex flex-col gap-3">
-              {anime.trailer?.url ? (
-                <a
-                  href={anime.trailer.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="gradient-button w-full py-4 rounded-2xl flex items-center justify-center gap-3 font-bold text-white shadow-xl shadow-brand-primary/20"
-                >
-                  <Play size={20} fill="currentColor" />
-                  Watch Trailer
-                </a>
-              ) : (
-                <button 
-                  disabled
-                  className="bg-slate-800 text-slate-500 cursor-not-allowed w-full py-4 rounded-2xl flex items-center justify-center gap-3 font-bold border border-white/5"
-                >
-                  <Play size={20} />
-                  Trailer Unavailable
-                </button>
-              )}
               <button
                 onClick={toggleWatchlist}
                 className={`w-full py-4 rounded-2xl flex items-center justify-center gap-3 font-bold transition-all border ${
@@ -167,6 +175,43 @@ export default function AnimeDetails() {
                   {genre.name}
                 </Link>
               ))}
+            </div>
+
+            {/* Trailer Section */}
+            <div className="bg-white/5 p-1 rounded-[32px] border border-white/5 overflow-hidden">
+               {activeTrailerId ? (
+                 <div className="aspect-video w-full">
+                    <iframe
+                      src={`https://www.youtube.com/embed/${activeTrailerId}?autoplay=0&rel=0`}
+                      title="Anime Trailer"
+                      className="w-full h-full rounded-[31px]"
+                      allowFullScreen
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    />
+                 </div>
+               ) : (
+                 <div className="aspect-video w-full flex flex-col items-center justify-center gap-4 bg-slate-900/50 rounded-[31px]">
+                    {searchingTrailer ? (
+                      <>
+                        <div className="w-10 h-10 border-2 border-brand-primary border-t-transparent rounded-full animate-spin" />
+                        <p className="text-slate-500 font-medium">Scanning YouTube for official trailer...</p>
+                      </>
+                    ) : (
+                      <>
+                        <Youtube size={48} className="text-slate-700" />
+                        <p className="text-slate-500 font-medium">No trailer found for this series.</p>
+                        <a 
+                          href={`https://www.youtube.com/results?search_query=${encodeURIComponent((anime.title_english || anime.title) + " official trailer")}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-brand-primary font-bold hover:underline"
+                        >
+                          Try searching on YouTube
+                        </a>
+                      </>
+                    )}
+                 </div>
+               )}
             </div>
 
             <div className="bg-white/5 p-6 md:p-8 rounded-[32px] border border-white/5">

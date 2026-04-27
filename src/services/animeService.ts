@@ -34,25 +34,25 @@ class AnimeService {
   }
 
   async getTopAnime(limit = 10): Promise<JikanResponse<Anime[]>> {
-    return this.fetcher<JikanResponse<Anime[]>>(`/top/anime?limit=${limit}`);
+    return this.fetcher<JikanResponse<Anime[]>>(`/top/anime?limit=${limit}&sfw=true`);
   }
 
   async getTrendingAnime(limit = 15): Promise<JikanResponse<Anime[]>> {
     // Jikan doesn't have a direct "trending" but "airing" is closest
-    return this.fetcher<JikanResponse<Anime[]>>(`/top/anime?filter=airing&limit=${limit}`);
+    return this.fetcher<JikanResponse<Anime[]>>(`/top/anime?filter=airing&limit=${limit}&sfw=true`);
   }
 
   async getPopularAnime(limit = 15): Promise<JikanResponse<Anime[]>> {
-    return this.fetcher<JikanResponse<Anime[]>>(`/top/anime?filter=bypopularity&limit=${limit}`);
+    return this.fetcher<JikanResponse<Anime[]>>(`/top/anime?filter=bypopularity&limit=${limit}&sfw=true`);
   }
 
   async getRecentlyUpdatedAnime(limit = 15): Promise<JikanResponse<Anime[]>> {
     // Recent recommendation or just top upcoming
-    return this.fetcher<JikanResponse<Anime[]>>(`/top/anime?filter=upcoming&limit=${limit}`);
+    return this.fetcher<JikanResponse<Anime[]>>(`/top/anime?filter=upcoming&limit=${limit}&sfw=true`);
   }
 
   async searchAnime(query: string, limit = 20): Promise<JikanResponse<Anime[]>> {
-    return this.fetcher<JikanResponse<Anime[]>>(`/anime?q=${encodeURIComponent(query)}&limit=${limit}`);
+    return this.fetcher<JikanResponse<Anime[]>>(`/anime?q=${encodeURIComponent(query)}&limit=${limit}&sfw=true`);
   }
 
   async getAnimeDetails(id: number): Promise<JikanResponse<Anime>> {
@@ -64,7 +64,7 @@ class AnimeService {
   }
 
   async getAnimeByGenre(genreId: number, limit = 20): Promise<JikanResponse<Anime[]>> {
-    return this.fetcher<JikanResponse<Anime[]>>(`/anime?genres=${genreId}&limit=${limit}&order_by=score&sort=desc`);
+    return this.fetcher<JikanResponse<Anime[]>>(`/anime?genres=${genreId}&limit=${limit}&order_by=score&sort=desc&sfw=true`);
   }
 }
 

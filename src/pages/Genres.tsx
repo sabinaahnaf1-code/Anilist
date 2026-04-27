@@ -19,7 +19,12 @@ export default function Genres() {
     const fetchGenres = async () => {
       try {
         const res = await animeService.getGenres();
-        setGenres(res.data.sort((a, b) => b.count - a.count));
+        // Filter out NSFW genres for the school project
+        const nsfwKeywords = ['Hentai', 'Ecchi', 'Erotica'];
+        const filtered = res.data.filter(g => 
+          !nsfwKeywords.some(keyword => g.name.toLowerCase().includes(keyword.toLowerCase()))
+        );
+        setGenres(filtered.sort((a, b) => b.count - a.count));
       } catch (error) {
         console.error(error);
       } finally {
