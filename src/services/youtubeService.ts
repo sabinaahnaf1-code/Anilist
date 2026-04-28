@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 
 /**
  * Service to interact with the YouTube Data API v3

@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { animeService } from '../services/animeService.ts';
-import { Anime } from '../types.ts';
-import AnimeCard from '../components/AnimeCard.tsx';
-import LoadingSpinner from '../components/LoadingSpinner.tsx';
+import { animeService } from '../services/animeService';
+import { Anime } from '../types';
+import AnimeCard from '../components/AnimeCard';
+import LoadingSpinner from '../components/LoadingSpinner';
 import { Search as SearchIcon } from 'lucide-react';
 
 export default function Search() {

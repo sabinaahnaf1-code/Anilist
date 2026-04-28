@@ -1,14 +1,16 @@
+import React from 'react';
 import { motion } from 'motion/react';
 import { Star, Play, Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { Anime } from '../types.ts';
+import { Anime } from '../types';
 
 interface AnimeCardProps {
   anime: Anime;
   index?: number;
+  key?: any;
 }
 
-export default function AnimeCard({ anime, index = 0 }: AnimeCardProps) {
+const AnimeCard: React.FC<AnimeCardProps> = ({ anime, index = 0 }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -58,4 +60,6 @@ export default function AnimeCard({ anime, index = 0 }: AnimeCardProps) {
       </Link>
     </motion.div>
   );
-}
+};
+
+export default AnimeCard;

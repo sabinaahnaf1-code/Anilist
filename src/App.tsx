@@ -5,12 +5,12 @@
 
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
-import Navbar from './components/Navbar.tsx';
-import Home from './pages/Home.tsx';
-import AnimeDetails from './pages/AnimeDetails.tsx';
-import Genres from './pages/Genres.tsx';
-import Search from './pages/Search.tsx';
-import Watchlist from './pages/Watchlist.tsx';
+import Navbar from './components/Navbar';
+import Home from './pages/Home';
+import AnimeDetails from './pages/AnimeDetails';
+import Genres from './pages/Genres';
+import Search from './pages/Search';
+import Watchlist from './pages/Watchlist';
 
 function ScrollToTop() {
   const { pathname } = useLocation();

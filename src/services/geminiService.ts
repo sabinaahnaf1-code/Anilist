@@ -11,13 +11,14 @@ export async function findYouTubeTrailerId(title: string): Promise<string | null
     If you're not absolutely sure, return "none".`;
 
     const response = await ai.models.generateContent({
-      model: "gemini-1.5-flash", // Using a faster model for search if available, but let's stick to what's defined in instructions if needed. 
-      // Actually instructions say gemini-3-flash-preview is the model used elsewhere.
-      contents: [{ role: "user", parts: [{ text: prompt }] }],
-      tools: [{ googleSearch: {} }],
+      model: "gemini-3-flash-preview",
+      contents: prompt,
+      config: {
+        tools: [{ googleSearch: {} }] as any
+      }
     });
 
-    const text = response.response.text().trim();
+    const text = response.text?.trim() || "";
     
     if (text.toLowerCase().includes("none")) {
       return null;

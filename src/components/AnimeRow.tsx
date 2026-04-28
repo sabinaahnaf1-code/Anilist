@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Anime } from '../types.ts';
-import AnimeCard from './AnimeCard.tsx';
+import { Anime } from '../types';
+import AnimeCard from './AnimeCard';
 
 interface AnimeRowProps {
   title: string;

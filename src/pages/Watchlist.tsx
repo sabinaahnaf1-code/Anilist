@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Anime } from '../types.ts';
-import AnimeCard from '../components/AnimeCard.tsx';
+import { Anime } from '../types';
+import AnimeCard from '../components/AnimeCard';
 import { HeartOff } from 'lucide-react';
 import { Link } from 'react-router-dom';
 

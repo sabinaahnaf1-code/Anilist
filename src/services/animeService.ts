@@ -1,4 +1,4 @@
-import { Anime, JikanResponse, Genre } from './types.ts';
+import { Anime, JikanResponse, Genre } from '../types';
 
 const BASE_URL = 'https://api.jikan.moe/v4';
 

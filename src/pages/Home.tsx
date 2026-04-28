@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Play, Info, Star, Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { animeService } from '../services/animeService.ts';
-import { Anime } from '../types.ts';
-import AnimeRow from '../components/AnimeRow.tsx';
-import LoadingSpinner from '../components/LoadingSpinner.tsx';
+import { animeService } from '../services/animeService';
+import { Anime } from '../types';
+import AnimeRow from '../components/AnimeRow';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function Home() {
   const [topAnime, setTopAnime] = useState<Anime[]>([]);

@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { animeService } from '../services/animeService.ts';
-import { Anime, Genre } from '../types.ts';
-import AnimeCard from '../components/AnimeCard.tsx';
-import LoadingSpinner from '../components/LoadingSpinner.tsx';
+import { animeService } from '../services/animeService';
+import { Anime, Genre } from '../types';
+import AnimeCard from '../components/AnimeCard';
+import LoadingSpinner from '../components/LoadingSpinner';
 import { motion } from 'motion/react';
 
 export default function Genres() {

@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { Star, Play, Calendar, Clock, Tv, Plus, Check, ChevronLeft, Volume2, Globe, Youtube } from 'lucide-react';
-import { animeService } from '../services/animeService.ts';
-import { findYouTubeTrailerId } from '../services/geminiService.ts';
-import { searchYouTubeTrailer } from '../services/youtubeService.ts';
-import { Anime } from '../types.ts';
-import LoadingSpinner from '../components/LoadingSpinner.tsx';
+import { animeService } from '../services/animeService';
+import { findYouTubeTrailerId } from '../services/geminiService';
+import { searchYouTubeTrailer } from '../services/youtubeService';
+import { Anime } from '../types';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function AnimeDetails() {
   const { id } = useParams();
