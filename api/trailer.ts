@@ -49,10 +49,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ error: "Title is required" });
   }
 
-  let videoId = await searchYouTubeTrailer(title);
-  if (!videoId) {
-    videoId = await findGeminiTrailerId(title);
-  }
+  console.log(`Searching for trailer for: ${title}`);
 
-  res.status(200).json({ videoId });
+  try {
+    let videoId = await searchYouTubeTrailer(title);
+    if (!videoId) {
+      console.log("YouTube API search returned no results, trying Gemini...");
+      videoId = await findGeminiTrailerId(title);
+    }
+
+    if (videoId) {
+      console.log(`Found trailer ID: ${videoId}`);
+    } else {
+      console.log("No trailer found via YouTube or Gemini.");
+    }
+
+    res.status(200).json({ videoId });
+  } catch (error) {
+    console.error("API handler failed:", error);
+    res.status(500).json({ error: "Internal server error", message: error instanceof Error ? error.message : String(error) });
+  }
 }
