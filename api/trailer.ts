@@ -4,8 +4,9 @@ import { GoogleGenAI } from "@google/genai";
 const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
 
 async function searchYouTubeTrailer(title: string): Promise<string | null> {
-  const API_KEY = process.env.VITE_YOUTUBE_API_KEY || process.env.YOUTUBE_API_KEY;
+  const API_KEY = process.env.YOUTUBE_API_KEY || process.env.VITE_YOUTUBE_API_KEY;
   if (!API_KEY) {
+    console.error("YOUTUBE_API_KEY is missing in environment variables.");
     return null;
   }
 
@@ -14,18 +15,28 @@ async function searchYouTubeTrailer(title: string): Promise<string | null> {
 
   try {
     const res = await fetch(url);
+    if (!res.ok) {
+      const errorData = await res.json();
+      console.error("YouTube API error response:", errorData);
+      return null;
+    }
     const data = await res.json();
     if (data.items && data.items.length > 0) {
       return data.items[0].id.videoId;
     }
     return null;
   } catch (error) {
+    console.error("YouTube fetch failed:", error);
     return null;
   }
 }
 
 async function findGeminiTrailerId(title: string): Promise<string | null> {
-  if (!process.env.GEMINI_API_KEY) return null;
+  const GEMINI_KEY = process.env.GEMINI_API_KEY;
+  if (!GEMINI_KEY) {
+    console.warn("GEMINI_API_KEY is missing in environment variables.");
+    return null;
+  }
 
   try {
     const prompt = `Find the YouTube video ID for the official trailer of the anime "${title}". Return ONLY the 11-character ID. If unsure return "none".`;
@@ -39,6 +50,7 @@ async function findGeminiTrailerId(title: string): Promise<string | null> {
     const match = text.match(/[a-zA-Z0-9_-]{11}/);
     return match ? match[0] : null;
   } catch (error) {
+    console.error("Gemini trailer search failed:", error);
     return null;
   }
 }
