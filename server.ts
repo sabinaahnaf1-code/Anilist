@@ -13,6 +13,29 @@ async function startServer() {
   const app = express();
   const PORT = 3000;
 
+  // API routes
+  app.get("/api/trailer", async (req, res) => {
+    const title = req.query.title as string;
+    if (!title) {
+      return res.status(400).json({ error: "Title is required" });
+    }
+
+    try {
+      const { searchYouTubeTrailer, findGeminiTrailerId } = await import("./src/services/trailerService.ts");
+      
+      let videoId = await searchYouTubeTrailer(title);
+      
+      if (!videoId) {
+        videoId = await findGeminiTrailerId(title);
+      }
+
+      res.json({ videoId });
+    } catch (error) {
+      console.error("Trailer search failed:", error);
+      res.status(500).json({ error: "Failed to search for trailer" });
+    }
+  });
+
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({

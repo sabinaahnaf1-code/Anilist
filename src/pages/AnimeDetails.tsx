@@ -3,8 +3,6 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { Star, Play, Calendar, Clock, Tv, Plus, Check, ChevronLeft, Volume2, Globe, Youtube } from 'lucide-react';
 import { animeService } from '../services/animeService';
-import { findYouTubeTrailerId } from '../services/geminiService';
-import { searchYouTubeTrailer } from '../services/youtubeService';
 import { Anime } from '../types';
 import LoadingSpinner from '../components/LoadingSpinner';
 
@@ -40,19 +38,21 @@ export default function AnimeDetails() {
           if (youtubeId) {
             setActiveTrailerId(youtubeId);
           } else {
-            // Fallback: Try YouTube API first, then Gemini
+            // Fallback: Fetch from our own API which handles YouTube and Gemini securely on the server
             setSearchingTrailer(true);
-            
-            let fallbackId = await searchYouTubeTrailer(animeData.title_english || animeData.title);
-            
-            if (!fallbackId) {
-              fallbackId = await findYouTubeTrailerId(animeData.title_english || animeData.title);
+            try {
+              const animeTitle = animeData.title_english || animeData.title;
+              const response = await fetch(`/api/trailer?title=${encodeURIComponent(animeTitle)}`);
+              const data = await response.json();
+              
+              if (data.videoId) {
+                setActiveTrailerId(data.videoId);
+              }
+            } catch (error) {
+              console.error("Failed to fetch trailer from API:", error);
+            } finally {
+              setSearchingTrailer(false);
             }
-
-            if (fallbackId) {
-              setActiveTrailerId(fallbackId);
-            }
-            setSearchingTrailer(false);
           }
           
           // Check watchlist
